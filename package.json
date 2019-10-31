@@ -1,0 +1,25 @@
+{
+  "name": "ict4cop_kenya_sms_service",
+  "version": "1.0.0",
+  "description": "smsm service",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harsh-a1/ict4cop_kenya_sms_service.git"
+  },
+  "author": "harsh.atal@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/harsh-a1/ict4cop_kenya_sms_service/issues"
+  },
+  "homepage": "https://github.com/harsh-a1/ict4cop_kenya_sms_service#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "winston": "^3.2.1"
+  }
+}
