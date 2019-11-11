@@ -90,11 +90,9 @@ app.get('/SMS/*', function(req, res){
     var name = req.query.name
     var tei =req.query.tei
     var ou = req.query.ou;
-    forwarder.pass(req,function(result){
-    
-        res.writeHead(200, {'Content-Type': 'json'});
-        res.end(result);    
-    });
+    __logger.info("[ Incoming ] -> "+JSON.stringify(req));
+      res.writeHead(200, {'Content-Type': 'json'});
+    res.end(result);    
     
 })
 
