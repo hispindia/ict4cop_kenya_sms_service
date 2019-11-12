@@ -1,5 +1,6 @@
 var moment = require("moment");
 var express = require('express');
+var config = require('./config.json');
 
 
 // Initialise
@@ -90,9 +91,12 @@ app.get('/SMS/*', function(req, res){
     var name = req.query.name
     var tei =req.query.tei
     var ou = req.query.ou;
-    __logger.info("[ Incoming ] -> "+JSON.stringify(req));
+    __logger.info("[ Incoming ] -> "+req);
       res.writeHead(200, {'Content-Type': 'json'});
-    res.end(result);    
+    res.end();    
     
 })
 
+
+var smsService = require('./smsService.js');
+smsService.sendSMS("40153","asdasdad")

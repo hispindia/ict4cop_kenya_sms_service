@@ -1,0 +1,13 @@
+{
+    "sms" :{
+        "apikey" : "",
+        "username" : "",
+        "shortcode" : "",
+        "base_url" : "https://api.africastalking.com/version1/messaging"
+    },
+
+    "dhis2" : {
+        "username" : "",
+        "password" : ""
+    }
+}
