@@ -1,6 +1,7 @@
 var moment = require("moment");
 var express = require('express');
 var config = require('./config.json');
+var importer = require('./importer');
 
 
 // Initialise
@@ -86,17 +87,26 @@ var server = app.listen(8010, function () {
 })
 
 // Open API 
-app.get('/SMS/*', function(req, res){
+app.get('/importSMSIntoDHIS2', function(req, res){
     debugger
     var name = req.query.name
     var tei =req.query.tei
     var ou = req.query.ou;
     __logger.info("[ Incoming ] -> "+req);
-      res.writeHead(200, {'Content-Type': 'json'});
-    res.end();    
+
+    var body = {
+        msg : "Level1 asdfuweyfgwuibd",
+        sender : "+9199992923",
+        timstamp : ""
+    }
+    new importer.at2dhis2event(body,function(){
+        res.writeHead(200, {'Content-Type': 'json'});
+        res.end();    
+    });
+    
     
 })
 
 
-var smsService = require('./smsService.js');
-smsService.sendSMS("40153","asdasdad")
+//var smsService = require('./smsService.js');
+//smsService.sendSMS("40153","asdasdad")
