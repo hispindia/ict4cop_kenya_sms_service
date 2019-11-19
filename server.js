@@ -1,7 +1,7 @@
 var moment = require("moment");
 var express = require('express');
 var config = require('./config.json');
-var importer = require('./importer');
+var importer = require('./importers/africas-talking/importer');
 
 
 // Initialise
@@ -99,7 +99,8 @@ app.get('/importSMSIntoDHIS2', function(req, res){
         sender : "+9199992923",
         timstamp : ""
     }
-    new importer.at2dhis2event(body,function(){
+
+    importer.at2dhis2event(body,function(){
         res.writeHead(200, {'Content-Type': 'json'});
         res.end();    
     });
