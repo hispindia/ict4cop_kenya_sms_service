@@ -1,13 +1,13 @@
 module.exports = new smsService();
 
 var config = require('./config.json');
-var _api = require('./api');
+/*var _api = require('./api');
 var api = new _api({
     base_url : config.sms.base_url,
     auth : config.sms.apikey
     
 });
-
+*/
 var request = require('request');
 
 function smsService(){

@@ -1,32 +1,75 @@
 module.exports = new importer();
 
-var ajax = require('../../ajax')
+var api = require('../../api')
 var converter = require('./converter');
+var constants = require('./constants');
+
 var config = require('../../config.json');
-
-
-var constants = [];
-var constantCodeMap = [];
-
-var auth = "Basic "+Buffer.from(config.dhis2.username+":"+config.dhis2.password).toString('base64');
-var url  = config.dhis2.url;
-
-
-ajax.getReq(url+"/api/constants.json?fields=*",auth,function(error,response,body){
-    if (error){
-        __logger.error("Failed to fetch constants list");
-        return;
-    }
-    constants = JSON.parse(body).constants;
-});
+var dhis2api = new api(config)
 
 function importer(){
-    
-    
-    this.at2dhis2event = function(body,callback){
+
+  
+    this.init = function(SMS,callback){
         
-        var result = converter.getEventFromMessage(body.message);
+        // fetch options
         
-        debugger
+        dhis2api.getObj("optionSets/"+constants.metadata.optionset_indicator_level+"?fields=id,name,options[id,name,code,attributeValues[value,attribute[id,name,code]]]",function(error,response,body){
+
+            if (error){
+                __logger.error("Unable to fetch option set for Indicator Levels. Aborting.");
+                callback(error)
+                return
+            }
+
+            var options = JSON.parse(body).options;
+
+            optionCodeMap = options.reduce(function(map,obj){
+                var key = obj.code.toLowerCase().replace(/\s/g, "");
+                map[key] = obj;
+                return map;
+            },[]);
+
+     //       console.log(SMS);
+
+            var smsKey = SMS.msg.toLowerCase().replace(/\s/g, "");
+
+            var match = "";
+            for (var key in optionCodeMap){
+                if (smsKey.startsWith(key)){
+                    if (key.length > match.length){
+                        match = key;
+                    }
+                }
+            }
+
+            if (match == ""){
+                // Unknown
+            }
+
+            converter.getEventFromMessage(SMS,optionCodeMap[match],postEventCreation);
+            
+        });
+
+        function postEventCreation(event){
+
+            __logger.info("Creating Event");
+            dhis2api.save("events?",event,function(error,response,body){
+
+                if (error){
+                    __logger.error("Error while saving event");
+                    callback(error);
+                    return;
+                }
+
+                callback(null,SMS)
+                debugger
+                
+            })
+        }
+        
+        
+        
     }
+
 }

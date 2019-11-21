@@ -11,6 +11,21 @@ exports.postReq = function(url,data,auth,callback) {
         json: true,   // <--Very important!!!
         body: data,
         headers: {
+            "Authorization": auth,
+            "Content-Type": "application/json",
+        }
+    }, function (error, response, body) {
+        callback(error,response,body);
+    });
+}
+
+exports.SMSpostReq = function(url,data,auth,callback) {
+    request({
+        url: url,
+        method: "POST",
+        json: true,   // <--Very important!!!
+        body: data,
+        headers: {
             "apiKey": auth,
             "Content-Type": "application/x-www-form-urlencoded",
         }

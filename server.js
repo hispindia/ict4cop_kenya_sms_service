@@ -2,6 +2,7 @@ var moment = require("moment");
 var express = require('express');
 var config = require('./config.json');
 var importer = require('./importers/africas-talking/importer');
+var smsService = require('./smsService.js');
 
 
 // Initialise
@@ -88,26 +89,32 @@ var server = app.listen(8010, function () {
 
 // Open API 
 app.get('/importSMSIntoDHIS2', function(req, res){
-    debugger
+   // debugger
     var name = req.query.name
     var tei =req.query.tei
     var ou = req.query.ou;
     __logger.info("[ Incoming ] -> "+req);
 
     var body = {
-        msg : "Level1 asdfuweyfgwuibd",
-        sender : "+9199992923",
-        timstamp : ""
+        msg : "Level 3a b asdfuweyfgwuibd",
+        sender : "9876545453435",
+        timstamp : moment().toISOString()
     }
 
-    importer.at2dhis2event(body,function(){
+    importer.init(body,function(error,response,body){
+        
         res.writeHead(200, {'Content-Type': 'json'});
-        res.end();    
+        res.end();
+
+        if (error){
+
+        }
+
+        smsService.sendSMS(response.sender,"Your message was received by the system.",function(){
+
+        })
+        
     });
     
     
 })
-
-
-//var smsService = require('./smsService.js');
-//smsService.sendSMS("40153","asdasdad")

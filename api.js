@@ -4,9 +4,18 @@ var ajax = require('./ajax');
 
 function api(config){
 
-    var base_url = config.base_url;
-    var auth = config.auth;
+    var base_url = config.dhis2.url;
+    var auth = "Basic "+Buffer.from(config.dhis2.username+":"+config.dhis2.password).toString('base64');;
 
+
+    this.getObj = function(endpoint,callback){
+        ajax.getReq(base_url+"/api/"+endpoint,auth,callback);
+    }
+
+    this.save = function(endpoint,obj,callback){
+        ajax.postReq(base_url+"/api/"+endpoint,obj,auth,callback);
+    }
+    
     this.postReq = function(endpoint,obj,headers,callback){
         
         ajax.postReq(base_url + endpoint,
