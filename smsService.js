@@ -55,15 +55,17 @@ function smsService(){
         function sendMessage() {
             const options = {
                 // Set the numbers you want to send to in international format
-                to: ['+25407240153'],
+                to: [to],
                 // Set your message
-                message: "TestTestTest",
+                message: message,
                 // Set your shortCode or senderId
             }
 
             // That’s it, hit send and we’ll take care of the rest
             sms.send(options)
-                .then(console.log)
+                .then(function(){
+
+                })
                 .catch(console.log);
         }
 

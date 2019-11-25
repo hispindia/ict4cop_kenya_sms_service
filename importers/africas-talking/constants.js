@@ -9,6 +9,7 @@ exports.metadata = {
     de_identifiedLevel : "wuU0oc3VNce",
     de_phoneNumber : "zwkPeFXDO7L",
     de_timestamp : "FySEVG4xwia",
+    de_messageType : "wQCA8pnlZhJ",
     optionset_indicator_level : "Tl4QLYO23Ur"
 
 }

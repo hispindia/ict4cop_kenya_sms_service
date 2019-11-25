@@ -19,7 +19,7 @@ function converter(){
             var _body = JSON.parse(body);
 
             if (_body.events.length == 0){
-                callback(constants.root_ou);
+                callback(null);
                 return
             }
             
@@ -41,7 +41,7 @@ function converter(){
             
             var event = {
                 program : constants.metadata.p_smsInbox,
-                orgUnit: orgUnit,
+                orgUnit : orgUnit ? orgUnit : constants.metadata.root_ou,
                 eventDate: moment().format("YYYY-MM-DD"),
                 storedBy: "sms-integration",
                 dataValues : []
@@ -52,6 +52,25 @@ function converter(){
                 value : SMS.message
             });
 
+            event.dataValues.push({
+                dataElement : constants.metadata.de_timestamp,
+                value : SMS.timestamp
+            });
+
+            var deVal_messageType = "unknown";
+            
+            if (option && orgUnit){                
+                deVal_messageType="valid";
+            }else if (!option && orgUnit){
+                deVal_messageType="invalid";            
+            }
+            
+            event.dataValues.push({
+                dataElement : constants.metadata.de_messageType,
+                value : deVal_messageType
+            });
+            
+            
             callback(event);
             
             

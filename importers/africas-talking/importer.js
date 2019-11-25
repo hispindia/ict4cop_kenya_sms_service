@@ -32,7 +32,7 @@ function importer(){
 
      //       console.log(SMS);
 
-            var smsKey = SMS.msg.toLowerCase().replace(/\s/g, "");
+            var smsKey = SMS.message.toLowerCase().replace(/\s/g, "");
 
             var match = "";
             for (var key in optionCodeMap){

@@ -90,17 +90,23 @@ var server = app.listen(8010, function () {
 // Open API 
 app.get('/importSMSIntoDHIS2', function(req, res){
    // debugger
-    var name = req.query.name
-    var tei =req.query.tei
-    var ou = req.query.ou;
-    __logger.info("[ Incoming ] -> "+req);
+  
+    __logger.info("[ Incoming ] -> "+JSON.stringify(req.query));
 
+    /*
     var body = {
-        msg : "Level 3a b asdfuweyfgwuibd",
+        message : "Level 3a b asdfuweyfgwuibd",
         sender : "9876545453435",
         timstamp : moment().toISOString()
     }
-
+    */
+    
+    var body = {
+        message : req.query.text,
+        sender : req.query.from,
+        timstamp : req.query.date
+    }
+    
     importer.init(body,function(error,response,body){
         
         res.writeHead(200, {'Content-Type': 'json'});
@@ -118,3 +124,5 @@ app.get('/importSMSIntoDHIS2', function(req, res){
     
     
 })
+
+//smsService.sendSMS("+254719277020","Your message was received by the system.",function(){})
