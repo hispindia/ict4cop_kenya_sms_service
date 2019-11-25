@@ -98,12 +98,26 @@ app.get('/importSMSIntoDHIS2', function(req, res){
         message : "Level 3a b asdfuweyfgwuibd",
         sender : "9876545453435",
         timstamp : moment().toISOString()
-    }
+        }
+
+        {
+
+        created: "2019-11-25T05:44:05.671Z"
+        linkId: ""
+        messageId: 133463748
+        recipient: "40153"
+        sender: "+254723789304"
+        text: "Incidences reported in Kitale...caleb"
+
+        }
+
+
     */
-    
+    debugger
     var body = {
         message : req.query.text,
         sender : req.query.from,
+        messageId: req.query.messageId,
         timstamp : req.query.date
     }
     
@@ -113,7 +127,7 @@ app.get('/importSMSIntoDHIS2', function(req, res){
         res.end();
 
         if (error){
-
+            return
         }
 
         smsService.sendSMS(response.sender,"Your message was received by the system.",function(){

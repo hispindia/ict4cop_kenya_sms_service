@@ -32,6 +32,11 @@ function importer(){
 
      //       console.log(SMS);
 
+            if (!SMS.message){
+                __logger.error("Message Not Present");
+                callback(true);
+                return;
+            }
             var smsKey = SMS.message.toLowerCase().replace(/\s/g, "");
 
             var match = "";
