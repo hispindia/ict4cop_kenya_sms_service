@@ -10,7 +10,11 @@ var dhis2api = new api(config)
 function converter(){
 
     function getOrgUnitByPhone(phone,callback){
-        dhis2api.getObj("events.json?program="+constants.metadata.p_fieldAgent+"&filter="+constants.metadata.de_fieldAgentPhone+":eq:"+phone,function(error,response,body){            
+        var url = "events.json?program="+constants.metadata.p_fieldAgent+"&filter="+constants.metadata.de_fieldAgentPhone+":eq:"+encodeURIComponent(phone);
+        
+        __logger.info(url);
+        
+        dhis2api.getObj(url,function(error,response,body){            
             if (error){
                 __logger.error("Unable to fetch ou from phone. Aborting.");
                 return
@@ -18,7 +22,13 @@ function converter(){
 
             var _body = JSON.parse(body);
 
+            if (!_body.events){
+                __logger.error("Error"+body)
+                return
+            }
+            
             if (_body.events.length == 0){
+                __logger.debug("No event found for the phone number"+phone);
                 callback(null);
                 return
             }
@@ -27,17 +37,17 @@ function converter(){
                 __logger.info("More than on facility assigned to a field agent!!!");
             }
 
+            __logger.debug("Following Org Unit found for the phone number"+phone + "->"+_body.events[0].orgUnit);
             callback(_body.events[0].orgUnit);
         });
-        
-        
-        
+                
     }
 
     
     this.getEventFromMessage = function(SMS,option,callback){
 
-        getOrgUnitByPhone(SMS.sender,function(orgUnit){
+        getOrgUnitByPhone(SMS.from,function(orgUnit){
+            __logger.debug("OrgunitByPhone "+ orgUnit);
             
             var event = {
                 program : constants.metadata.p_smsInbox,
@@ -70,11 +80,7 @@ function converter(){
                 value : deVal_messageType
             });
             
-            
-            callback(event);
-            
-            
-            
+            callback(event,deVal_messageType);           
         })
         
     }

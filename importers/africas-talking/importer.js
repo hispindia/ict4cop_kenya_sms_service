@@ -23,20 +23,14 @@ function importer(){
             }
 
             var options = JSON.parse(body).options;
-
+            __logger.debug("Options Length"+options.length);
+            
             optionCodeMap = options.reduce(function(map,obj){
                 var key = obj.code.toLowerCase().replace(/\s/g, "");
                 map[key] = obj;
                 return map;
             },[]);
 
-     //       console.log(SMS);
-
-            if (!SMS.message){
-                __logger.error("Message Not Present");
-                callback(true);
-                return;
-            }
             var smsKey = SMS.message.toLowerCase().replace(/\s/g, "");
 
             var match = "";
@@ -48,15 +42,11 @@ function importer(){
                 }
             }
 
-            if (match == ""){
-                // Unknown
-            }
-
             converter.getEventFromMessage(SMS,optionCodeMap[match],postEventCreation);
             
         });
 
-        function postEventCreation(event){
+        function postEventCreation(event,messageType){
 
             __logger.info("Creating Event");
             dhis2api.save("events?",event,function(error,response,body){
@@ -67,7 +57,8 @@ function importer(){
                     return;
                 }
 
-                callback(null,SMS)
+                __logger.info("Message Imported as Event with id["+SMS.id+"]");
+                callback(null,messageType)
                 debugger
                 
             })

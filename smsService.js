@@ -14,6 +14,8 @@ function smsService(){
     
 
     this.sendSMS = function(to,message,callback){           
+
+        __logger.info("Sending Verification Message");
         
         // Use the service
         const options = {
@@ -63,8 +65,8 @@ function smsService(){
 
             // That’s it, hit send and we’ll take care of the rest
             sms.send(options)
-                .then(function(){
-
+                .then(function(v1){
+                    __logger.info("Message Sent"+JSON.stringify(v1))
                 })
                 .catch(console.log);
         }

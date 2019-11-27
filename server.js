@@ -88,50 +88,53 @@ var server = app.listen(8010, function () {
 })
 
 // Open API 
-app.get('/importSMSIntoDHIS2', function(req, res){
+app.post('/importSMSIntoDHIS2', function(req, res){
    // debugger
-  
-    __logger.info("[ Incoming ] -> "+JSON.stringify(req.query));
-
     /*
-    var body = {
-        message : "Level 3a b asdfuweyfgwuibd",
-        sender : "9876545453435",
-        timstamp : moment().toISOString()
-        }
-
-        {
-
-        created: "2019-11-25T05:44:05.671Z"
-        linkId: ""
-        messageId: 133463748
-        recipient: "40153"
-        sender: "+254723789304"
-        text: "Incidences reported in Kitale...caleb"
-
-        }
-
+        [ Incoming ] -> {"linkId":"0","text":"Level 0","to":"40153","id":"7f33b0d8-2b0d-4f71-aad7-0d8e0f871519","cost":"None","date":"2019-11-25T09:08:53Z","from":"+254700504425","networkCode":"63902"}
 
     */
-    debugger
+
+    if (!req.body.text){
+        __logger.error("Unknown message not from the SMS Provider.");
+        return;
+    }
+
+    __logger.info("[ Incoming ] -> "+JSON.stringify(req.body.id));
+    __logger.debug("[ Incoming Content ] -> "+JSON.stringify(req.body));
+
     var body = {
-        message : req.query.text,
-        sender : req.query.from,
-        messageId: req.query.messageId,
-        timstamp : req.query.date
+        message : req.body.text,
+        from : req.body.from,
+        id: req.body.id,
+        timestamp : req.body.date,
+        to : req.body.to,
+        networkCode : req.body.networkCode
     }
     
-    importer.init(body,function(error,response,body){
+    importer.init(body,function(error,messageType){
         
         res.writeHead(200, {'Content-Type': 'json'});
         res.end();
 
         if (error){
+            __logger.error("Import Failed for SMS with Id["+SMS.id+"]");
             return
         }
 
-        smsService.sendSMS(response.sender,"Your message was received by the system.",function(){
+        if (messageType == "unknown"){
+            __logger.info("Unknown Number Received");
+            return;
+        }
 
+        smsService.sendSMS(body.from,"Your message was received by the system.",function(error,response,_body){
+            if (error){
+                __logger.error("Problem sending verification message"+body.id);
+                return;
+            }
+            __logger.info("Verification Message sent for message with Id["+body.id+"]");
+            
+            // TODO  push dhis2 alert message
         })
         
     });
@@ -139,4 +142,3 @@ app.get('/importSMSIntoDHIS2', function(req, res){
     
 })
 
-//smsService.sendSMS("+254719277020","Your message was received by the system.",function(){})
