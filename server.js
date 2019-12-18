@@ -112,7 +112,7 @@ app.post('/importSMSIntoDHIS2', function(req, res){
         networkCode : req.body.networkCode
     }
     
-    importer.init(body,function(error,messageType){
+    importer.init(body,function(error,messageType,description){
         
         res.writeHead(200, {'Content-Type': 'json'});
         res.end();
@@ -121,13 +121,20 @@ app.post('/importSMSIntoDHIS2', function(req, res){
             __logger.error("Import Failed for SMS with Id["+SMS.id+"]");
             return
         }
-
+   
         if (messageType == "unknown"){
             __logger.info("Unknown Number Received");
             return;
         }
 
-        smsService.sendSMS(body.from,"Your message was received by the system.",function(error,response,_body){
+        var messageContent = `Received:[ ${description} ]`;
+        if (messageType == "invalid"){
+            messageContent = "Received Unknown Code. Please recheck the code.";
+        }
+        
+        
+        __logger.info("Response SMS -> "+messageContent);
+        smsService.sendSMS(body.from,messageContent,function(error,response,_body){
             if (error){
                 __logger.error("Problem sending verification message"+body.id);
                 return;

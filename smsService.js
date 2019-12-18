@@ -68,7 +68,10 @@ function smsService(){
                 .then(function(v1){
                     __logger.info("Message Sent"+JSON.stringify(v1))
                 })
-                .catch(console.log);
+                .catch(function(error,a,b,c,d){
+                    debugger
+                    __logger.error("In Catch Send SMS : "+error)
+                })
         }
 
         sendMessage();

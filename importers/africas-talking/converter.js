@@ -56,7 +56,8 @@ function converter(){
                 storedBy: "sms-integration",
                 dataValues : []
             };
-
+            var description = null;
+            
             event.dataValues.push({
                 dataElement : constants.metadata.de_origMsg,
                 value : SMS.message
@@ -79,8 +80,22 @@ function converter(){
                 dataElement : constants.metadata.de_messageType,
                 value : deVal_messageType
             });
+
+            if (option){
+                event.dataValues.push({
+                    dataElement : constants.metadata.de_identifiedLevel,
+                    value : option.code
+                });
+                
+                description = option.name.split("(")[1];
+                event.dataValues.push({
+                    dataElement : constants.metadata.de_identifiedLevelDescription,
+                    value : description
+                });
+            }
+            __logger.debug("Event [ "+JSON.stringify(event));
             
-            callback(event,deVal_messageType);           
+            callback(event,deVal_messageType,description);           
         })
         
     }

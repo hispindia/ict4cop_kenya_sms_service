@@ -46,7 +46,7 @@ function importer(){
             
         });
 
-        function postEventCreation(event,messageType){
+        function postEventCreation(event,messageType,description){
 
             __logger.info("Creating Event");
             dhis2api.save("events?",event,function(error,response,body){
@@ -58,8 +58,7 @@ function importer(){
                 }
 
                 __logger.info("Message Imported as Event with id["+SMS.id+"]");
-                callback(null,messageType)
-                debugger
+                callback(null,messageType,description)
                 
             })
         }
