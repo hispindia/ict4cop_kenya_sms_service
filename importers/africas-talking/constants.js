@@ -14,3 +14,16 @@ exports.metadata = {
     optionset_indicator_level : "Tl4QLYO23Ur"
 
 }
+
+exports.isJson = function(data){
+    if (!data){
+        return false;
+    }
+    
+    try{
+        var json = JSON.parse(data);
+        return true;
+    }catch(e){
+        return false;
+    }
+}

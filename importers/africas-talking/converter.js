@@ -15,8 +15,8 @@ function converter(){
         __logger.info(url);
         
         dhis2api.getObj(url,function(error,response,body){            
-            if (error){
-                __logger.error("Unable to fetch ou from phone. Aborting.");
+            if (error || !constants.isJson(body)){
+                __logger.error("Unable to fetch ou from phone. Aborting."+error+body);
                 return
             }
 

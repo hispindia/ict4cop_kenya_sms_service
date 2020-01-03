@@ -22,6 +22,12 @@ function importer(){
                 return
             }
 
+            if (!constants.isJson(body)){
+                __logger.error("NoJSON - Unable to fetch option set for Indicator Levels. Aborting.");
+                callback(true);
+                return
+            }
+            
             var options = JSON.parse(body).options;
             __logger.debug("Options Length"+options.length);
             
