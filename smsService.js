@@ -66,11 +66,14 @@ function smsService(){
             // That’s it, hit send and we’ll take care of the rest
             sms.send(options)
                 .then(function(v1){
-                    __logger.info("Message Sent"+JSON.stringify(v1))
+                    __logger.info("Message Sent"+JSON.stringify(v1));
+                    callback(false,v1);
                 })
                 .catch(function(error,a,b,c,d){
                     debugger
                     __logger.error("In Catch Send SMS : "+error)
+                    callback(true,error);
+
                 })
         }
 

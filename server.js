@@ -3,6 +3,7 @@ var express = require('express');
 var config = require('./config.json');
 var importer = require('./importers/africas-talking/importer');
 var smsService = require('./smsService.js');
+var config = require('./config.json');
 
 
 // Initialise
@@ -18,7 +19,7 @@ var app = express();
      res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
 
      // Request headers you wish to allow
-     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,apiKey');
 
      // Pass to next layer of middleware
      next();
@@ -76,6 +77,7 @@ global.__logger = createLogger({
         new transports.File({filename: 'logs/activity.log', level:'info'})
     ]
 });
+
 /**
  */
 
@@ -87,6 +89,46 @@ var server = app.listen(8010, function () {
     
 })
 
+//Open API for SMS Send
+app.post('/sendSMS',function(req,res){
+    __logger.info("[SENDSMS]");
+    res.writeHead(200, {'Content-Type': 'json'});
+        
+    if (!req.body.message ||
+        !req.headers.apikey ||
+        !req.body.to ||
+        req.headers.apikey != config.sms.apikey){
+        debugger
+        __logger.debug("[SENDSMS] SMS not Valid");
+
+        res.end(JSON.stringify({
+            message:"Error",
+            error : true
+        }));
+        return;
+    }
+
+    __logger.info("[SENDSMS] Message"+req.body.message + ",phone="+req.body.to)
+    smsService.sendSMS(req.body.to,req.body.message,function(error,response,body){
+        if (error){
+            __logger.error("[SENDSMS] Problem sending verification message");
+            res.end(JSON.stringify({
+                message:error,
+                error : true
+            }));
+        
+            return;
+        }
+        __logger.info("[SENDSMS] Verification Message sent for message with Id["+"]");
+        res.end(JSON.stringify({
+            message:response,
+            error : false
+        }));
+        
+    })
+});
+
+
 // Open API 
 app.post('/importSMSIntoDHIS2', function(req, res){
    // debugger
@@ -97,6 +139,9 @@ app.post('/importSMSIntoDHIS2', function(req, res){
 
     if (!req.body.text){
         __logger.error("Unknown message not from the SMS Provider.");
+
+        res.writeHead(200, {'Content-Type': 'json'});
+        res.end();
         return;
     }
 
