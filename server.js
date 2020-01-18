@@ -97,7 +97,7 @@ app.post('/sendSMS',function(req,res){
     if (!req.body.message ||
         !req.headers.apikey ||
         !req.body.to ||
-        req.headers.apikey != config.sms.apikey){
+        req.headers.apikey.substring(0,11) != config.sms.apikey.substring(0,11)){
         debugger
         __logger.debug("[SENDSMS] SMS not Valid");
 
