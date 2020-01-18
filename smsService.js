@@ -62,6 +62,7 @@ function smsService(){
                 message: message,
                 // Set your shortCode or senderId
             }
+            __logger.debug("Message "+message);
 
             // That’s it, hit send and we’ll take care of the rest
             sms.send(options)
@@ -69,7 +70,7 @@ function smsService(){
                     __logger.info("Message Sent"+JSON.stringify(v1));
                     callback(false,v1);
                 })
-                .catch(function(error,a,b,c,d){
+                .catch(function(error){
                     debugger
                     __logger.error("In Catch Send SMS : "+error)
                     callback(true,error);

@@ -33,39 +33,39 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 
 /** Set Up Logging
-  var winston = require('winston');
-global.__logger = winston.createLogger({
+    var winston = require('winston');
+    global.__logger = winston.createLogger({
     level : 'silly',
     transports: [
-        new (winston.transports.Console)({
-            colorize: true,
-            timestamp: true
-        }),
-        new (winston.transports.File)({
-            filename: './logs/server.log',
-            timestamp: true
-        })
+    new (winston.transports.Console)({
+    colorize: true,
+    timestamp: true
+    }),
+    new (winston.transports.File)({
+    filename: './logs/server.log',
+    timestamp: true
+    })
     ]
-});
+    });
 */
 const {transports, createLogger, format } = require('winston');
 const winston = require('winston');
- let alignColorsAndTime = winston.format.combine(
-        winston.format.colorize({
-            all:true
-        }),
-        winston.format.label({
-            label:'[LOGGER]'
-        }),
-        winston.format.timestamp({
-            format:"YY-MM-DD HH:mm:ss"
-        }),
-     winston.format.prettyPrint(),
+let alignColorsAndTime = winston.format.combine(
+    winston.format.colorize({
+        all:true
+    }),
+    winston.format.label({
+        label:'[LOGGER]'
+    }),
+    winston.format.timestamp({
+        format:"YY-MM-DD HH:mm:ss"
+    }),
+    winston.format.prettyPrint(),
 
-        winston.format.printf(
-            info => ` ${info.label}  ${info.timestamp}  ${info.level} : ${info.message}`
-        )
-    );
+    winston.format.printf(
+        info => ` ${info.label}  ${info.timestamp}  ${info.level} : ${info.message}`
+    )
+);
 
 global.__logger = createLogger({
     level:"silly",
@@ -93,7 +93,7 @@ var server = app.listen(8010, function () {
 app.post('/sendSMS',function(req,res){
     __logger.info("[SENDSMS]");
     res.writeHead(200, {'Content-Type': 'json'});
-        
+    
     if (!req.body.message ||
         !req.headers.apikey ||
         !req.body.to ||
@@ -109,31 +109,33 @@ app.post('/sendSMS',function(req,res){
     }
 
     __logger.info("[SENDSMS] Message"+req.body.message + ",phone="+req.body.to)
-    smsService.sendSMS(req.body.to,req.body.message,function(error,response,body){
+    smsService.sendSMS(req.body.to,req.body.message,function(error,response){
         if (error){
-            __logger.error("[SENDSMS] Problem sending verification message");
+            __logger.error("[SENDSMS] Problem sending verification message"+response);
+            
             res.end(JSON.stringify({
-                message:error,
-                error : true
+                response:response.message,
+                error : error,
+                as:"asd"
             }));
-        
-            return;
-        }
-        __logger.info("[SENDSMS] Verification Message sent for message with Id["+"]");
-        res.end(JSON.stringify({
-            message:response,
-            error : false
-        }));
-        
+            return 
+        }else{
+            __logger.info("[SENDSMS] Verification Message sent"+response);
+            res.end(JSON.stringify({
+                response:response,
+                error : error,
+                as:"asd"
+            }));
+        }        
     })
 });
 
 
 // Open API 
 app.post('/importSMSIntoDHIS2', function(req, res){
-   // debugger
+    // debugger
     /*
-        [ Incoming ] -> {"linkId":"0","text":"Level 0","to":"40153","id":"7f33b0d8-2b0d-4f71-aad7-0d8e0f871519","cost":"None","date":"2019-11-25T09:08:53Z","from":"+254700504425","networkCode":"63902"}
+      [ Incoming ] -> {"linkId":"0","text":"Level 0","to":"40153","id":"7f33b0d8-2b0d-4f71-aad7-0d8e0f871519","cost":"None","date":"2019-11-25T09:08:53Z","from":"+254700504425","networkCode":"63902"}
 
     */
 
@@ -166,7 +168,7 @@ app.post('/importSMSIntoDHIS2', function(req, res){
             __logger.error("Import Failed for SMS with Id["+SMS.id+"]");
             return
         }
-   
+        
         if (messageType == "unknown"){
             __logger.info("Unknown Number Received");
             return;

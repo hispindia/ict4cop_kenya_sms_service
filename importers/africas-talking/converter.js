@@ -68,11 +68,11 @@ function converter(){
                 value : SMS.timestamp
             });
 
-            var deVal_messageType = "unknown";
+            var deVal_messageType = "spam";
             
-            if (option && orgUnit){                
+            if (option){                
                 deVal_messageType="valid";
-            }else if (!option && orgUnit){
+            }else if (!option){
                 deVal_messageType="invalid";            
             }
             
