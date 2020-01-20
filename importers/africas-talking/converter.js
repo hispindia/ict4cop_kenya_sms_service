@@ -85,7 +85,7 @@ function converter(){
             }else if (!option){
                 deVal_messageType="invalid";            
             }
-            
+            __logger.debug(deVal_messageType+JSON.stringify(option))
             event.dataValues.push({
                 dataElement : constants.metadata.de_messageType,
                 value : deVal_messageType

@@ -63,7 +63,7 @@ function importer(){
                     return;
                 }
 
-                __logger.info("Message Imported as Event with id["+SMS.id+"]");
+                __logger.info("Message Imported as Event with id["+SMS.id+"], Event:"+JSON.stringify(body));
                 callback(null,messageType,description)
                 
             })
