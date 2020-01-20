@@ -169,7 +169,7 @@ app.post('/importSMSIntoDHIS2', function(req, res){
             return
         }
         
-        if (messageType == "unknown"){
+        if (messageType == "spam"){
             __logger.info("Unknown Number Received");
             return;
         }
