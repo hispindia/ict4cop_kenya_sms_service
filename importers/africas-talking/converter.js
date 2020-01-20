@@ -67,7 +67,17 @@ function converter(){
                 dataElement : constants.metadata.de_timestamp,
                 value : SMS.timestamp
             });
-
+            
+            event.dataValues.push({
+                dataElement : constants.metadata.de_phoneNumber,
+                value : SMS.from
+            });
+            
+            event.dataValues.push({
+                dataElement : constants.metadata.de_sms_id,
+                value : SMS.id+"_"+SMS.linkId+"_"+SMS.networkCode
+            });
+            
             var deVal_messageType = "spam";
             
             if (option){                
