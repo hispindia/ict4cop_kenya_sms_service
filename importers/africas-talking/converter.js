@@ -52,7 +52,7 @@ function converter(){
             var event = {
                 program : constants.metadata.p_smsInbox,
                 orgUnit : orgUnit ? orgUnit : constants.metadata.root_ou,
-                eventDate: moment().format("YYYY-MM-DD"),
+                eventDate: moment(),
                 storedBy: "sms-integration",
                 dataValues : []
             };
