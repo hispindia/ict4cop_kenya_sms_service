@@ -3,8 +3,10 @@ var express = require('express');
 var config = require('./config.json');
 var importer = require('./importers/africas-talking/importer');
 var smsService = require('./smsService.js');
+var aggregatedReport = require('./aggregateReport.js')
 var config = require('./config.json');
 
+var CronJob = require('cron').CronJob;
 
 // Initialise
 var app = express();
@@ -86,6 +88,21 @@ var server = app.listen(8010, function () {
     var port = server.address().port
 
     __logger.info("Server listening at http://%s:%s", host, port);
+
+    var crontime = '1'
+    var job = new CronJob({
+        cronTime: '0 */'+crontime+' * * *',
+ //       cronTime: '* * * * *',
+
+        onTick: function() {
+            __logger.info("Begin scheduled Aggregate Reporting SMS to Control Group");
+            new aggregatedReport(crontime);
+        },
+        start: true,
+        runOnInit : false
+    });
+    
+    job.start();
     
 })
 
@@ -174,7 +191,7 @@ app.post('/importSMSIntoDHIS2', function(req, res){
             return;
         }
 
-        var messageContent = `Received:[ ${description} ]`;
+        var messageContent = `Received "${description}"`;
         if (messageType == "invalid"){
             messageContent = "Received Unknown Code. Please recheck the code.";
         }

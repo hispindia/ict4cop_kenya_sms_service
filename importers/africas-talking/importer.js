@@ -6,9 +6,9 @@ var constants = require('./constants');
 
 var config = require('../../config.json');
 var dhis2api = new api(config)
+var smsHelper= require('../../smsHelper');
 
 function importer(){
-
   
     this.init = function(SMS,callback){
         
@@ -64,7 +64,13 @@ function importer(){
                 }
 
                 __logger.info("Message Imported as Event with id["+SMS.id+"], Event:"+JSON.stringify(body));
-                callback(null,messageType,description)
+                callback(null,messageType,description);
+
+                if (messageType == "valid"){
+                    smsHelper.autoForwardToControlGroup(event,SMS,description,function(){
+                        
+                    })
+                }
                 
             })
         }

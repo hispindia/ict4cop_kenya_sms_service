@@ -19,6 +19,7 @@
   "homepage": "https://github.com/harsh-a1/ict4cop_kenya_sms_service#readme",
   "dependencies": {
     "africastalking": "^0.4.2",
+    "cron": "^1.8.2",
     "express": "^4.17.1",
     "moment": "^2.24.0",
     "request": "^2.88.0",

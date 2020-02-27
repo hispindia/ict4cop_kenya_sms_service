@@ -12,7 +12,8 @@ exports.metadata = {
     de_timestamp : "FySEVG4xwia",
     de_messageType : "wQCA8pnlZhJ",
     de_sms_id : "BfsRG4RBQpe",
-    optionset_indicator_level : "Tl4QLYO23Ur"
+    optionset_indicator_level : "Tl4QLYO23Ur",
+    usergroup_control_room : "uGAh1mIvOjV"
 
 }
 

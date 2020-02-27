@@ -2,21 +2,30 @@ module.exports = new smsService();
 
 var config = require('./config.json');
 /*var _api = require('./api');
-var api = new _api({
-    base_url : config.sms.base_url,
-    auth : config.sms.apikey
-    
-});
+  var api = new _api({
+  base_url : config.sms.base_url,
+  auth : config.sms.apikey
+  
+  });
 */
 var request = require('request');
 
 function smsService(){
-    
+   
     this.sendSMS = function(to,message,callback){           
-      
+        
         __logger.info("Sending Verification Message");
         
         to = to.split(",");
+        to = to.reduce(function(list,obj){
+            if (obj.length ==13){
+                list.push(obj);
+            }else{
+                __logger.debug("There is a phone Number in wrong format! Ignoring."+obj);
+            }
+            
+            return list
+        },[]);
         
         // Initialize the SDK
         const AfricasTalking = require('africastalking')({
@@ -29,7 +38,7 @@ function smsService(){
         const sms = AfricasTalking.SMS;
 
         function sendMessage() {
-          
+            
             const options = {
                 // Set the numbers you want to send to in international format
                 to: to,
@@ -58,20 +67,20 @@ function smsService(){
     }
 }
 
-  /*      request({
-            url:  config.sms.base_url,
-            method: "POST",
-            //    json: true,   // <--Very important!!!
-            body: JSON.stringify(options),
-            headers: {
-                "apiKey": config.sms.apikey,
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Accept" : "application/json"
+/*      request({
+        url:  config.sms.base_url,
+        method: "POST",
+        //    json: true,   // <--Very important!!!
+        body: JSON.stringify(options),
+        headers: {
+        "apiKey": config.sms.apikey,
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept" : "application/json"
 
-            }
+        }
         }, function (error, response, body) {
-            debugger
-            //callback(error,response,body);
+        debugger
+        //callback(error,response,body);
         });
 
 */

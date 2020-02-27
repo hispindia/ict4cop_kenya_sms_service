@@ -101,6 +101,8 @@ function converter(){
                 });
                 
                 description = option.name.split("(")[1];
+                description = description.replace(")","");
+                
                 event.dataValues.push({
                     dataElement : constants.metadata.de_identifiedLevelDescription,
                     value : description
