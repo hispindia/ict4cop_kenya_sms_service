@@ -182,7 +182,7 @@ app.post('/importSMSIntoDHIS2', function(req, res){
         res.end();
 
         if (error){
-            __logger.error("Import Failed for SMS with Id["+SMS.id+"]");
+            __logger.error("Import into DHIS2 Failed "+error.toString());
             return
         }
         

@@ -1,6 +1,6 @@
 module.exports = new converter();
 
-var moment = require('moment');
+var moment = require('moment-timezone');
 var constants = require('./constants');
 
 var api = require('../../api')
@@ -52,10 +52,11 @@ function converter(){
             var event = {
                 program : constants.metadata.p_smsInbox,
                 orgUnit : orgUnit ? orgUnit : constants.metadata.root_ou,
-                eventDate: moment(),
+                eventDate: moment().tz("Africa/Nairobi").toISOString(true),
                 storedBy: "sms-integration",
                 dataValues : []
             };
+            debugger
             var description = null;
             
             event.dataValues.push({

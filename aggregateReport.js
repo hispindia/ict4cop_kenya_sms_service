@@ -6,14 +6,14 @@ var config = require('./config.json');
 var dhis2api = new api(config)
 var smsHelper = require('./smsHelper.js');
 
-var moment = require('moment');
+var moment = require('moment-timezone');
 
 function aggregateReport(crontime){
 
-    var date = moment();
+    var date = moment().tz("Africa/Nairobi");
     date.subtract(moment.duration("0"+crontime+":00:00"));
-
-    dhis2api.getObj("events?paging=false&program="+constants.metadata.p_smsInbox+"&startDate="+date.toISOString(),function(error,response,body){
+debugger
+    dhis2api.getObj("events?paging=false&program="+constants.metadata.p_smsInbox+"&startDate="+date.toISOString(true),function(error,response,body){
        
         if (error){
             __logger.error("Unable to fetch events for aggregate reporting.");
