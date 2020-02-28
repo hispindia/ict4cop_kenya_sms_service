@@ -48,11 +48,12 @@ function converter(){
 
         getOrgUnitByPhone(SMS.from,function(orgUnit){
             __logger.debug("OrgunitByPhone "+ orgUnit);
-            
+            var eventDate = moment().tz("Africa/Nairobi").toISOString(true);
+            eventDate = eventDate.split("+")[0];
             var event = {
                 program : constants.metadata.p_smsInbox,
                 orgUnit : orgUnit ? orgUnit : constants.metadata.root_ou,
-                eventDate: moment().tz("Africa/Nairobi").toISOString(true),
+                eventDate: eventDate,
                 storedBy: "sms-integration",
                 dataValues : []
             };

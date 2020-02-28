@@ -12,8 +12,9 @@ function aggregateReport(crontime){
 
     var date = moment().tz("Africa/Nairobi");
     date.subtract(moment.duration("0"+crontime+":00:00"));
-debugger
-    dhis2api.getObj("events?paging=false&program="+constants.metadata.p_smsInbox+"&startDate="+date.toISOString(true),function(error,response,body){
+    date = date.toISOString(true).split("+")[0];
+
+    dhis2api.getObj("events?paging=false&program="+constants.metadata.p_smsInbox+"&startDate="+date,function(error,response,body){
        
         if (error){
             __logger.error("Unable to fetch events for aggregate reporting.");
@@ -22,6 +23,7 @@ debugger
 
         var events = JSON.parse(body).events;
         var sms = makeSMS(events)
+        __logger.info("SMS Report sending to Control group=" + sms)
         smsHelper.sendToControlGroup(sms,function(){
         })
     })
@@ -30,7 +32,7 @@ debugger
     function makeSMS(events){
 
         if (events.length == 0){
-            return "No Messages have come in the last "+crontime + " hour";
+            return "[UPDATE] No Messages have come in the last "+crontime + " hour";
         }
         
         var statusMap = events.reduce(function(map,ev){
@@ -54,18 +56,18 @@ debugger
             if (key !="valid" &&
                 key!="invalid" &&
                 key !="spam"){
-                SMS.push( `Received  ${statusMap[key]} of ${key} ! `)
+                SMS.push( `Received  ${statusMap[key]} messages of "${key}". `)
             }
         }
 
         for (var key in statusMap){
-            if (key =="valid" &&
-                key=="invalid" &&
+            if (key =="valid" ||
+                key=="invalid" ||
                 key =="spam"){
                 SMS.push( ` [${key}=${statusMap[key]}]`)
             }
         }
         
-        return "UPDATE "+SMS.join(',');
+        return "[UPDATE] "+SMS.join(' ');
     }
 }

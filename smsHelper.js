@@ -12,7 +12,15 @@ function smsHelper(){
 
     this.autoForwardToControlGroup=function(event,sms,description,callback){
 
-        var msg = `${description} received from ${sms.from}`;
+        debugger
+        var level = event.dataValues.reduce(function(str,obj){
+            if (obj.dataElement == constants.metadata.de_identifiedLevel){
+                str= obj.value;
+            }
+            return str;
+        },'');
+        
+        var msg = `"${level} ${description}" received from "${sms.from}". SMS="${sms.message}"`;
         __logger.info(msg+" Auto forwarding..");
 
         _sendToControlGroup(msg,function(){

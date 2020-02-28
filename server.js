@@ -99,7 +99,7 @@ var server = app.listen(8010, function () {
             new aggregatedReport(crontime);
         },
         start: true,
-        runOnInit : false
+        runOnInit : true
     });
     
     job.start();

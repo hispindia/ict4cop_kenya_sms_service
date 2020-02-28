@@ -70,13 +70,8 @@ function importer(){
                     smsHelper.autoForwardToControlGroup(event,SMS,description,function(){
                         
                     })
-                }
-                
+                }                
             })
-        }
-        
-        
-        
+        }        
     }
-
 }
