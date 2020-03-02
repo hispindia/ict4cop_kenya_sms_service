@@ -32,12 +32,12 @@ function importer(){
             __logger.debug("Options Length"+options.length);
             
             optionCodeMap = options.reduce(function(map,obj){
-                var key = obj.code.toLowerCase().replace(/\s/g, "");
+                var key = obj.code.toLowerCase().replace(/\s\s+/g, ' ');
                 map[key] = obj;
                 return map;
             },[]);
 
-            var smsKey = SMS.message.toLowerCase().replace(/\s/g, "");
+            var smsKey = SMS.message.toLowerCase().replace(/\s\s+/g, ' ');
 
             var match = "";
             for (var key in optionCodeMap){
