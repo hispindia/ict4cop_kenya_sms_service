@@ -12,9 +12,9 @@ exports.metadata = {
     de_timestamp : "FySEVG4xwia",
     de_messageType : "wQCA8pnlZhJ",
     de_sms_id : "BfsRG4RBQpe",
+    de_sms_offline_response_id : "GajT20fnqa7",
     optionset_indicator_level : "Tl4QLYO23Ur",
     usergroup_control_room : "uGAh1mIvOjV"
-
 }
 
 exports.isJson = function(data){

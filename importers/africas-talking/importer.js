@@ -12,8 +12,7 @@ function importer(){
   
     this.init = function(SMS,callback){
         
-        // fetch options
-        
+        // fetch options        
         dhis2api.getObj("optionSets/"+constants.metadata.optionset_indicator_level+"?fields=id,name,options[id,name,code,attributeValues[value,attribute[id,name,code]]]",function(error,response,body){
 
             if (error){
@@ -52,7 +51,7 @@ function importer(){
             
         });
 
-        function postEventCreation(event,messageType,description){
+        function postEventCreation(event,messageType,description,orgUnit){
 
             __logger.info("Creating Event");
             dhis2api.save("events?",event,function(error,response,body){
@@ -66,12 +65,15 @@ function importer(){
                 __logger.info("Message Imported as Event with id["+SMS.id+"], Event:"+JSON.stringify(body));
                 callback(null,messageType,description);
 
-                if (messageType == "valid"){
-                    smsHelper.autoForwardToControlGroup(event,SMS,description,function(){
-                        
-                    })
-                }                
+                smsHelper.autoForwardToControlGroup(event,
+                                                    SMS,
+                                                    description,
+                                                    messageType,
+                                                    orgUnit,
+                                                    function(){ })
+                
             })
         }        
     }
+
 }

@@ -10,22 +10,73 @@ var smsService = require('./smsService.js');
 
 function smsHelper(){
 
-    this.autoForwardToControlGroup=function(event,sms,description,callback){
+    this.autoForwardToControlGroup=function(event,
+                                            sms,
+                                            description,
+                                            messageType,
+                                            orgUnit,
+                                            callback){
 
-        debugger
+        if (messageType == "spam" ){
+            return
+        }
+
+        if (level == "Level 0"){
+            __logger.info("[Auto] Level 0. Skipping forwarding. ")
+            return 
+        }
+        
+        var smsOfflineID = '';
         var level = event.dataValues.reduce(function(str,obj){
             if (obj.dataElement == constants.metadata.de_identifiedLevel){
                 str= obj.value;
             }
             return str;
+        },null);
+
+        if (!level){
+            level = "[Unknown Level]";
+            description = "";
+        }
+        
+        var smsOfflineID = event.dataValues.reduce(function(str,obj){
+            if (obj.dataElement == constants.metadata.de_sms_offline_response_id){
+                str= obj.value;
+            }
+            return str;
         },'');
         
-        var msg = `"${level} ${description}" received from "${sms.from}". SMS="${sms.message}"`;
-        __logger.info(msg+" Auto forwarding..");
+        if (orgUnit){
+            dhis2api.getObj("organisationUnits/"+orgUnit+"?fields=id,name,ancestors[id,name,level]",function(error,response,body){
+                if (error){
+                    __logger.error("[Control Group Msg] Unable to fetch orgUnit" + orgUnit);
+                    return;
+                }
 
-        _sendToControlGroup(msg,function(){
-
-        })
+                orgUnit = JSON.parse(body);
+                orgUnit = orgUnit.ancestors.reduce(function(str,obj){
+                    if (obj.level >1){
+                        str = obj.name + "/" + str;
+                    }
+                    
+                    return str;
+                },orgUnit.name);
+                
+                makeSMS();
+            });
+        }else{
+            makeSMS();
+        }
+        
+        function makeSMS(){
+            var msg = `"${level} ${description}" reported by "${sms.from}".Facility="${orgUnit?orgUnit:'Unknown'}"\n\nSMS="${sms.message}"\n\n${smsOfflineID}`;
+            __logger.info(msg+" Auto forwarding..");
+            
+            _sendToControlGroup(msg,function(){
+                
+            })
+        }
+        
     }
 
     this.sendToControlGroup = function(sms,callback){

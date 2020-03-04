@@ -23,7 +23,8 @@ function aggregateReport(crontime){
 
         var events = JSON.parse(body).events;
         var sms = makeSMS(events)
-        __logger.info("SMS Report sending to Control group=" + sms)
+        __logger.info("SMS Report sending to Control group=" + sms+"Timestamp="+date+"Current Date="+moment().toISOString(true));
+        
         smsHelper.sendToControlGroup(sms,function(){
         })
     })
@@ -56,7 +57,7 @@ function aggregateReport(crontime){
             if (key !="valid" &&
                 key!="invalid" &&
                 key !="spam"){
-                SMS.push( `Received  ${statusMap[key]} messages of "${key}". `)
+                SMS.push( `Received  ${statusMap[key]} messages of "${key}".\n`)
             }
         }
 

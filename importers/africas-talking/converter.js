@@ -9,6 +9,26 @@ var dhis2api = new api(config)
 
 function converter(){
 
+    function sumDigit(num){
+
+        if (num < 10){
+            return num;
+        }else{
+            return sumDigit(sum(num));
+        }
+        
+        function sum(n){
+            return n
+                .toString()
+                .split('')
+                .map(Number)
+                .reduce(function (a, b) {
+                    return a + b;
+                }, 0);
+        }
+    }
+
+    
     function getOrgUnitByPhone(phone,callback){
         var url = "events.json?program="+constants.metadata.p_fieldAgent+"&filter="+constants.metadata.de_fieldAgentPhone+":eq:"+encodeURIComponent(phone);
         
@@ -43,6 +63,12 @@ function converter(){
                 
     }
 
+    function getNumericID(id){
+        return id.split("")
+            .map(function(x){return x.charCodeAt()})
+            .map(sumDigit)
+            .join("");
+    }
     
     this.getEventFromMessage = function(SMS,option,callback){
 
@@ -57,7 +83,7 @@ function converter(){
                 storedBy: "sms-integration",
                 dataValues : []
             };
-            debugger
+            
             var description = null;
             
             event.dataValues.push({
@@ -77,9 +103,9 @@ function converter(){
             
             event.dataValues.push({
                 dataElement : constants.metadata.de_sms_id,
-                value : SMS.id+"_"+SMS.linkId+"_"+SMS.networkCode
+                value : SMS.id
             });
-            
+   
             var deVal_messageType = "spam";
             
             if (option){                
@@ -89,8 +115,9 @@ function converter(){
             if (!option && orgUnit){
                 deVal_messageType="invalid";            
             }
-
+        
             __logger.debug(deVal_messageType+JSON.stringify(option))
+
             event.dataValues.push({
                 dataElement : constants.metadata.de_messageType,
                 value : deVal_messageType
@@ -110,9 +137,20 @@ function converter(){
                     value : description
                 });
             }
+            
+            if (deVal_messageType == "valid" ||
+                deVal_messageType == "invalid" ){
+
+                event.dataValues.push({
+                    dataElement : constants.metadata.de_sms_offline_response_id,
+                    value : getNumericID(SMS.id.split("-")[0])
+                });
+            }
+            
+            
             __logger.debug("Event [ "+JSON.stringify(event));
             
-            callback(event,deVal_messageType,description);           
+            callback(event,deVal_messageType,description,orgUnit);           
         })
         
     }

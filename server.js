@@ -92,17 +92,16 @@ var server = app.listen(8010, function () {
     var crontime = '1'
     var job = new CronJob({
         cronTime: '0 */'+crontime+' * * *',
- //       cronTime: '* * * * *',
+        //       cronTime: '* * * * *',
 
         onTick: function() {
             __logger.info("Begin scheduled Aggregate Reporting SMS to Control Group");
             new aggregatedReport(crontime);
         },
-        start: true,
-        runOnInit : true
+        start: false,
+        runOnInit : false
     });
     
-    job.start();
     
 })
 
@@ -176,40 +175,42 @@ app.post('/importSMSIntoDHIS2', function(req, res){
         networkCode : req.body.networkCode
     }
     
-    importer.init(body,function(error,messageType,description){
-        
-        res.writeHead(200, {'Content-Type': 'json'});
-        res.end();
+    importSMS();
+    function importSMS(){
 
-        if (error){
-            __logger.error("Import into DHIS2 Failed "+error.toString());
-            return
-        }
-        
-        if (messageType == "spam"){
-            __logger.info("Unknown Number Received");
-            return;
-        }
+        importer.init(body,function(error,messageType,description){
+            
+            res.writeHead(200, {'Content-Type': 'json'});
+            res.end();
 
-        var messageContent = `Received "${description}"`;
-        if (messageType == "invalid"){
-            messageContent = "Received Unknown Code. Please recheck the code.";
-        }
-        
-        
-        __logger.info("Response SMS -> "+messageContent);
-        smsService.sendSMS(body.from,messageContent,function(error,response,_body){
             if (error){
-                __logger.error("Problem sending verification message"+body.id);
+                __logger.error("Import into DHIS2 Failed "+error.toString());
+                return
+            }
+            
+            if (messageType == "spam"){
+                __logger.info("Unknown Number Received");
                 return;
             }
-            __logger.info("Verification Message sent for message with Id["+body.id+"]");
+
+            var messageContent = `Received "${description}"`;
+            if (messageType == "invalid"){
+                messageContent = "Received Unknown Code. Please recheck the code.";
+            }
             
-            // TODO  push dhis2 alert message
-        })
-        
-    });
-    
-    
+            
+            __logger.info("Response SMS -> "+messageContent);
+            smsService.sendSMS(body.from,messageContent,function(error,response,_body){
+                if (error){
+                    __logger.error("Problem sending verification message"+body.id);
+                    return;
+                }
+                __logger.info("Verification Message sent for message with Id["+body.id+"]");
+                
+                // TODO  push dhis2 alert message
+            })
+            
+        });
+    }
 })
 
