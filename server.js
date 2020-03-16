@@ -174,8 +174,13 @@ app.post('/importSMSIntoDHIS2', function(req, res){
         to : req.body.to,
         networkCode : req.body.networkCode
     }
+
+    importer.isOfflineMessage(body,function(result){
+        if (!result){
+            importSMS();
+        }
+    });
     
-    importSMS();
     function importSMS(){
 
         importer.init(body,function(error,messageType,description){
@@ -213,4 +218,3 @@ app.post('/importSMSIntoDHIS2', function(req, res){
         });
     }
 })
-

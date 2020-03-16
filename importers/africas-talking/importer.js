@@ -7,9 +7,79 @@ var constants = require('./constants');
 var config = require('../../config.json');
 var dhis2api = new api(config)
 var smsHelper= require('../../smsHelper');
+var offlineResponder = require('./offlineResponder');
 
 function importer(){
-  
+
+    this.isOfflineMessage = function(SMS,callback){
+
+        dhis2api.getObj("userGroups?fields=id,name,users[id,phoneNumber,name,organisationUnits[id,name,path]]&paging=false",function(error,response,body){
+            if (error){
+                __logger.error("cannot fetch control room user group "+error.toString());
+                return
+            }
+
+            var userGroups = JSON.parse(body).userGroups;
+
+            var userGroupMap = userGroups.reduce(function(map,obj){
+                map[obj.id] = obj;
+                return map;
+            },[]);
+            
+            var controlRoomUserG = userGroupMap[constants.metadata.usergroup_control_room];
+
+            debugger
+            var flag = controlRoomUserG.users.reduce(function(flag,obj){
+                
+                if (obj.phoneNumber.includes(SMS.from)){
+                    flag=true;
+                }
+                
+                return flag;
+            },false);
+
+            if (flag){
+                // send response
+                offlineRespond(SMS,userGroupMap,callback)
+                
+            }else{
+                callback(false)
+            }
+        })
+    }
+
+    function offlineRespond(SMS,userGroupMap,callback){
+
+        // check for code
+        var code = SMS.message.trim().substr(-8);
+        var isnum = /^\d+$/.test(code);
+
+        if (!isnum){
+            __logger.info("Message from Control Group but no offline code specified!, Passing to importer");
+            callback(false)
+            return
+        }
+
+        dhis2api.getObj("events?program="+constants.metadata.p_smsInbox+"&filter="+constants.metadata.de_sms_offline_response_id+":eq:"+code,function(error,response,body){
+            if (error){
+                __logger.error("[Offline Responder] Unable to fetch event from code."+error);
+                return
+            }
+
+            var events = JSON.parse(body).events;
+            if (events.length ==0){
+                __logger.info("No SMS with the specified code found. Aborting Response"+code);
+                return;
+            }
+
+            var event = events[0];
+            new offlineResponder(event,userGroupMap,function(){});
+            
+            debugger            
+        })
+        
+    }
+    
     this.init = function(SMS,callback){
         
         // fetch options        

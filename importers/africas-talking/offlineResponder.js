@@ -7,36 +7,31 @@ var api = require('../../api')
 var config = require('../../config.json');
 var dhis2api = new api(config)
 
-function offline_responder(SMS,callback){
-    
-    var url = "events.json?program="+constants.metadata.p_fieldAgent+"&filter="+constants.metadata.de_fieldAgentPhone+":eq:"+encodeURIComponent(phone);
-    
-    __logger.info(url);
-    
-    dhis2api.getObj(url,function(error,response,body){            
-        if (error || !constants.isJson(body)){
-            __logger.error("Unable to fetch ou from phone. Aborting."+error+body);
-            return
-        }
+function offline_responder(event,userGroupMap,callback){
 
-        var _body = JSON.parse(body);
+    var eventDVMap = event.dataValues.reduce(function(map,obj){
+        map[obj.dataElement] = obj.value;
+        return map;
+    },[]);
 
-        if (!_body.events){
-            __logger.error("Error"+body)
-            return
-        }
+    var users = [];
+    var defaultUserGroup = userGroupMap[constants.metadata.usergroup_permanent_responders];
+
+    users = defaultUserGroup.users;
+    
+    
+    const identifiedLevel = eventDVMap[constants.metadata.identifiedLevel];
+
+    if (identifiedLevel){
         
-        if (_body.events.length == 0){
-            __logger.debug("No event found for the phone number"+phone);
-            callback(null);
-            return
-        }
-        
-        if (_body.events.length > 2){
-            __logger.info("More than on facility assigned to a field agent!!!");
-        }
+    }
+    
+    debugger
 
-        __logger.debug("Following Org Unit found for the phone number"+phone + "->"+_body.events[0].orgUnit);
-        callback(_body.events[0].orgUnit);
-    });
+    
+    // check if level group exists
+
+    //  check if ou passes
+
+   debugger
 }

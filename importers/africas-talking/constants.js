@@ -14,7 +14,8 @@ exports.metadata = {
     de_sms_id : "BfsRG4RBQpe",
     de_sms_offline_response_id : "GajT20fnqa7",
     optionset_indicator_level : "Tl4QLYO23Ur",
-    usergroup_control_room : "uGAh1mIvOjV"
+    usergroup_control_room : "uGAh1mIvOjV",
+    usergroup_permanent_responders : "Xa9xIWspFWA"
 }
 
 exports.isJson = function(data){
