@@ -15,6 +15,11 @@ function api(config){
     this.save = function(endpoint,obj,callback){
         ajax.postReq(base_url+"/api/"+endpoint,obj,auth,callback);
     }
+
+    this.update = function(endpoint,obj,callback){
+        ajax.putReq(base_url+"/api/"+endpoint,obj,auth,callback);
+    }
+
     
     this.postReq = function(endpoint,obj,headers,callback){
         
@@ -30,6 +35,7 @@ function api(config){
                          callback(null,response)                        
                      });            
     }
-    
+
+  
     
 }

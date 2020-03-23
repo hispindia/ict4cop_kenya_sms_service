@@ -13,6 +13,9 @@ exports.metadata = {
     de_messageType : "wQCA8pnlZhJ",
     de_sms_id : "BfsRG4RBQpe",
     de_sms_offline_response_id : "GajT20fnqa7",
+    de_comment : "BJw3aY0mqCK",
+    de_recepeints : "isO4XHxr3y3",
+    de_sms_sent_status : "rrIwr5wHqUe",
     optionset_indicator_level : "Tl4QLYO23Ur",
     usergroup_control_room : "uGAh1mIvOjV",
     usergroup_permanent_responders : "Xa9xIWspFWA"

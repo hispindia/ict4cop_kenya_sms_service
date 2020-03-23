@@ -175,6 +175,9 @@ app.post('/importSMSIntoDHIS2', function(req, res){
         networkCode : req.body.networkCode
     }
 
+    res.writeHead(200, {'Content-Type': 'json'});
+    res.end();
+    
     importer.isOfflineMessage(body,function(result){
         if (!result){
             importSMS();
@@ -184,17 +187,14 @@ app.post('/importSMSIntoDHIS2', function(req, res){
     function importSMS(){
 
         importer.init(body,function(error,messageType,description){
-            
-            res.writeHead(200, {'Content-Type': 'json'});
-            res.end();
-
+     
             if (error){
-                __logger.error("Import into DHIS2 Failed "+error.toString());
+                __logger.error("[Verification SMS] Import into DHIS2 Failed "+error.toString());
                 return
             }
             
             if (messageType == "spam"){
-                __logger.info("Unknown Number Received");
+                __logger.info("[Verification SMS] Unknown Number Received. Skipping");
                 return;
             }
 
@@ -203,16 +203,13 @@ app.post('/importSMSIntoDHIS2', function(req, res){
                 messageContent = "Received Unknown Code. Please recheck the code.";
             }
             
-            
-            __logger.info("Response SMS -> "+messageContent);
             smsService.sendSMS(body.from,messageContent,function(error,response,_body){
                 if (error){
-                    __logger.error("Problem sending verification message"+body.id);
+                    __logger.error("[Verification SMS] Problem sending SMS"+body.id);
                     return;
                 }
-                __logger.info("Verification Message sent for message with Id["+body.id+"]");
+                __logger.info("[Verification SMS] SMS sent with Id["+body.id+"]");
                 
-                // TODO  push dhis2 alert message
             })
             
         });
