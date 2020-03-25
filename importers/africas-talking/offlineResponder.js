@@ -105,7 +105,7 @@ function offline_responder(SMS,event,eventOU,userGroups,callback){
 
 function getUsers(event,eventOUPath,defaultUG,identifiedLevelUG,controlGroupUsers){
 
-    var users = defaultUG.users;
+    var users = [];
 
     if (identifiedLevelUG){
         users.push(...identifiedLevelUG.users)
@@ -120,12 +120,16 @@ function getUsers(event,eventOUPath,defaultUG,identifiedLevelUG,controlGroupUser
         },false)    
     });
 
+    if (defaultUG.users){
+        users.push(...defaultUG.users)
+    }
+
     if (controlGroupUsers){
         users.push(...controlGroupUsers.users)
     }
 
     // filter uniq https://stackoverflow.com/a/56757215/4989935
-  //  users = users.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i);
+    users = users.filter((v,i,a)=>a.findIndex(t=>(t.id === v.id))===i);
     
     return users;
 }
